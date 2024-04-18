@@ -44,7 +44,7 @@ Optional:
 
 ```lua
 return {
-	"CopilotC-Nvim/CopilotChat.nvim",
+	"bruceunx/CopilotChat.nvim",
 	branch = "canary",
 	dependencies = {
 		{ "zbirenbaum/copilot.lua" }, -- or github/copilot.vim
