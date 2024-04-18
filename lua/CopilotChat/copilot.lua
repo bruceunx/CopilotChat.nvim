@@ -268,8 +268,10 @@ local Copilot = class(function(self, proxy, allow_insecure)
   self.current_job = nil
 end)
 
-function Copilot:with_auth(on_done, on_error)
-  if not self.github_token then
+function Copilot:with_auth(on_done, on_error, need_token, token_url)
+  need_token = need_token or false
+  token_url = token_url or 'https://api.github.com/copilot_internal/v2/token'
+  if not self.github_token and need_token then
     local msg =
       'No GitHub token found, please use `:Copilot setup` to set it up from copilot.vim or copilot.lua'
     log.error(msg)
@@ -284,7 +286,6 @@ function Copilot:with_auth(on_done, on_error)
   then
     local sessionid = uuid() .. tostring(math.floor(os.time() * 1000))
 
-    local url = 'https://api.github.com/copilot_internal/v2/token'
     local headers = {
       ['authorization'] = 'token ' .. self.github_token,
       ['accept'] = 'application/json',
@@ -293,7 +294,7 @@ function Copilot:with_auth(on_done, on_error)
       headers[key] = value
     end
 
-    curl.get(url, {
+    curl.get(token_url, {
       headers = headers,
       proxy = self.proxy,
       insecure = self.allow_insecure,
@@ -342,14 +343,14 @@ function Copilot:ask(prompt, opts)
   local on_progress = opts.on_progress
   local on_error = opts.on_error
 
-  log.debug('System prompt: ' .. system_prompt)
-  log.debug('Prompt: ' .. prompt)
-  log.debug('Embeddings: ' .. #embeddings)
-  log.debug('Filename: ' .. filename)
-  log.debug('Filetype: ' .. filetype)
-  log.debug('Selection: ' .. selection)
-  log.debug('Model: ' .. model)
-  log.debug('Temperature: ' .. temperature)
+  -- log.debug('System prompt: ' .. system_prompt)
+  -- log.debug('Prompt: ' .. prompt)
+  -- log.debug('Embeddings: ' .. #embeddings)
+  -- log.debug('Filename: ' .. filename)
+  -- log.debug('Filetype: ' .. filetype)
+  -- log.debug('Selection: ' .. selection)
+  -- log.debug('Model: ' .. model)
+  -- log.debug('Temperature: ' .. temperature)
 
   -- If we already have running job, cancel it and notify the user
   if self.current_job then
@@ -380,7 +381,6 @@ function Copilot:ask(prompt, opts)
     embeddings_message.files = filtered_files
   end
 
-  local url = 'https://api.githubcopilot.com/chat/completions'
   local body = vim.json.encode(
     generate_ask_request(
       self.history,
@@ -402,12 +402,20 @@ function Copilot:ask(prompt, opts)
   local errored = false
   local full_response = ''
 
+  local need_token = true
+  if opts.gpt_server == 'groq' or opts.gpt_server == 'gemini' then
+    need_token = false
+  end
+
+  local token_url = opts.token_url
+
   self:with_auth(function()
     local headers = generate_headers(self.token.token, self.sessionid, self.machineid)
+    local file = temp_file(body)
     self.current_job = curl
-      .post(url, {
+      .post(opts.url, {
         headers = headers,
-        body = temp_file(body),
+        body = file,
         proxy = self.proxy,
         insecure = self.allow_insecure,
         on_error = function(err)
@@ -483,7 +491,7 @@ function Copilot:ask(prompt, opts)
       :after(function()
         self.current_job = nil
       end)
-  end, on_error)
+  end, on_error, need_token, token_url)
 end
 
 --- Generate embeddings for the given inputs

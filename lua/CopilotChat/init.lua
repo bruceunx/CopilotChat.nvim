@@ -333,6 +333,10 @@ function M.response()
   return state.response
 end
 
+function M.change_gpt(gpt_name)
+  gpt_name = gpt_name or 'copilot'
+  M.config.gpt_server = gpt_name
+end
 --- Ask a question to the Copilot model.
 ---@param prompt string
 ---@param config CopilotChat.config|CopilotChat.config.prompt|nil
@@ -388,6 +392,13 @@ function M.ask(prompt, config, source)
       end
     end)
   end
+  local token_url = M.config.copilot_token_url
+  local url = M.config.copilot_url
+  if M.config.gpt_server == 'gemini' then
+    url = M.config.gemini_url
+  elseif M.config.gpt_server == 'groq' then
+    url = M.config.groq_url
+  end
 
   context.find_for_query(state.copilot, {
     context = selected_context,
@@ -407,6 +418,9 @@ function M.ask(prompt, config, source)
         end_row = selection.end_row,
         system_prompt = system_prompt,
         model = config.model,
+        token_url = token_url,
+        url = url,
+        gpt_server = M.config.gpt_server,
         temperature = config.temperature,
         on_error = on_error,
         on_done = function(response, token_count)

@@ -26,6 +26,67 @@ Optional:
 
 ## Installation
 
+### Add support for AI like Gemini or Groq as long as the same API interfaces
+
+![](./screenshot.png)
+
+> check [https://github.com/bruceunx/gpt-server]('https://github.com/bruceunx/gpt-server') to setup your Gemini or Groq server
+
+- need to add the server URL in the configuration
+
+#### change `gpt_server` to the server name
+
+```bash
+:lua require('CopilotChat').change_gpt("gemini")
+```
+
+#### Lazy.nvim config
+
+```lua
+return {
+	"CopilotC-Nvim/CopilotChat.nvim",
+	branch = "canary",
+	dependencies = {
+		{ "zbirenbaum/copilot.lua" }, -- or github/copilot.vim
+		{ "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
+	},
+
+	opts = {
+		question_header = "## User ",
+		answer_header = "## Copilot ",
+		error_header = "## Error ",
+		separator = " ", -- Separator to use in chat
+		prompts = prompts,
+		auto_follow_cursor = false, -- Don't follow the cursor after getting response
+		show_help = true, -- Show help in virtual text, set to true if that's 1st time using Copilot Chat
+		gpt_server = "groq", -- copilot or gemini or groq
+		copilot_url = "https://api.githubcopilot.com/chat/completions",
+		gemini_url = "", -- custom url for gemini with the same api interface
+		groq_url = "", -- custom url for groq with the same api interface
+	},
+	config = function(_, opts)
+		local chat = require("CopilotChat")
+		local select = require("CopilotChat.select")
+
+		opts.selection = select.unnamed
+
+		-- Override the git prompts message
+		opts.prompts.Commit = {
+			prompt = "Write commit message for the change with commitizen convention",
+			selection = select.gitdiff,
+		}
+		opts.prompts.CommitStaged = {
+			prompt = "Write commit message for the change with commitizen convention",
+			selection = function(source)
+				return select.gitdiff(source, true)
+			end,
+		}
+
+		chat.setup(opts)
+    end,
+}
+```
+
 ### Lazy.nvim
 
 ```lua
