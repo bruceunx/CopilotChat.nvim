@@ -416,9 +416,13 @@ function Copilot:ask(prompt, opts)
     local headers = {}
     if need_token then
       headers = generate_headers(self.token.token, self.sessionid, self.machineid)
+    else
+      headers = {
+        ['content-type'] = 'application/json',
+      }
     end
     local file = temp_file(body)
-    log.debug('temp_file', file)
+    -- log.debug('temp_file', file)
     self.current_job = curl
       .post(opts.url, {
         headers = headers,
