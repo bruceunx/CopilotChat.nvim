@@ -282,7 +282,11 @@ function Copilot:with_auth(on_done, on_error, need_token, token_url)
   end
 
   if
-    not self.token or (self.token.expires_at and self.token.expires_at <= math.floor(os.time()))
+    need_token
+    and (
+      not self.token
+      or (self.token.expires_at and self.token.expires_at <= math.floor(os.time()))
+    )
   then
     local sessionid = uuid() .. tostring(math.floor(os.time() * 1000))
 
@@ -403,15 +407,18 @@ function Copilot:ask(prompt, opts)
   local full_response = ''
 
   local need_token = true
-  if opts.gpt_server == 'groq' or opts.gpt_server == 'gemini' then
+  if opts.gpt_server ~= 'copilot' then
     need_token = false
   end
-
   local token_url = opts.token_url
 
   self:with_auth(function()
-    local headers = generate_headers(self.token.token, self.sessionid, self.machineid)
+    local headers = {}
+    if need_token then
+      headers = generate_headers(self.token.token, self.sessionid, self.machineid)
+    end
     local file = temp_file(body)
+    log.debug('temp_file', file)
     self.current_job = curl
       .post(opts.url, {
         headers = headers,
