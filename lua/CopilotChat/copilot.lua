@@ -348,14 +348,14 @@ function Copilot:ask(prompt, opts)
   local on_progress = opts.on_progress
   local on_error = opts.on_error
 
-  log.debug(
-    'use_general_ai->',
-    opts.use_general_ai,
-    'use_selection->',
-    opts.use_selection,
-    'model->',
-    opts.gpt_server
-  )
+  -- log.debug(
+  --   'use_general_ai->',
+  --   opts.use_general_ai,
+  --   'use_selection->',
+  --   opts.use_selection,
+  --   'model->',
+  --   opts.gpt_server
+  -- )
   if opts.use_general_ai then
     system_prompt = 'You are a general AI. Please assist me with your capacity.'
   end

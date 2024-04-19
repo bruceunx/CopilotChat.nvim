@@ -374,11 +374,24 @@ function M.ask(prompt, config, source)
   end
 
   if state.copilot:stop() then
-    append('\n\n' .. config.question_header .. config.separator .. '\n\n')
+    append(M.config.question_header .. M.config.separator .. '\n\n')
   end
 
   append(updated_prompt)
-  append('\n\n' .. config.answer_header .. config.separator .. '\n\n')
+  -- append('\n\n' .. config.answer_header .. config.separator .. '\n\n')
+  append(
+    '\n\n'
+      .. M.config.answer_header
+      .. M.config.separator
+      .. ' | '
+      .. M.config.gpt_server
+      .. ' | use_selection->'
+      .. tostring(M.config.use_selection)
+      .. ' | use_general_ai->'
+      .. tostring(M.config.use_general_ai)
+      .. M.config.separator
+      .. '\n\n'
+  )
   state.chat:follow()
 
   local selected_context = config.context
@@ -435,7 +448,7 @@ function M.ask(prompt, config, source)
         on_error = on_error,
         on_done = function(response, token_count)
           vim.schedule(function()
-            append('\n\n' .. config.question_header .. config.separator .. '\n\n')
+            append('\n\n' .. M.config.question_header .. M.config.separator .. '\n\n')
             state.response = response
             if tiktoken.available() and token_count and token_count > 0 then
               state.chat:finish(token_count .. ' tokens used')
@@ -473,7 +486,19 @@ function M.reset(no_insert)
 
   wrap(function()
     state.chat:clear()
-    append(M.config.question_header .. M.config.separator .. '\n\n')
+    append(
+      M.config.question_header
+        .. M.config.separator
+        .. ' | '
+        .. M.config.gpt_server
+        .. ' | use_selection->'
+        .. tostring(M.config.use_selection)
+        .. ' | use_general_ai->'
+        .. tostring(M.config.use_general_ai)
+        .. M.config.separator
+        .. '\n\n'
+    )
+    -- append(M.config.question_header .. M.config.separator .. '\n\n')
     state.chat:finish()
     state.chat:follow()
 
@@ -534,6 +559,7 @@ function M.load(name, history_path)
   if #history > 0 then
     append('\n\n')
   end
+
   append(M.config.question_header .. M.config.separator .. '\n\n')
 
   state.chat:finish()
@@ -777,7 +803,19 @@ function M.setup(config)
       end
     end)
 
-    append(M.config.question_header .. M.config.separator .. '\n\n')
+    append(
+      M.config.question_header
+        .. M.config.separator
+        .. ' | '
+        .. M.config.gpt_server
+        .. ' | use_selection->'
+        .. tostring(M.config.use_selection)
+        .. ' | use_general_ai->'
+        .. tostring(M.config.use_general_ai)
+        .. M.config.separator
+        .. '\n\n'
+    )
+
     state.chat:finish()
   end)
 
