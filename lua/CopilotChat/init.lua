@@ -333,6 +333,10 @@ function M.response()
   return state.response
 end
 
+function M.use_general_ai(use)
+  M.config.use_general_ai = use
+end
+
 function M.use_selection(use)
   M.config.use_selection = use
 end
@@ -425,6 +429,7 @@ function M.ask(prompt, config, source)
         token_url = token_url,
         url = url,
         use_selection = M.config.use_selection,
+        use_general_ai = M.config.use_general_ai,
         gpt_server = M.config.gpt_server,
         temperature = config.temperature,
         on_error = on_error,

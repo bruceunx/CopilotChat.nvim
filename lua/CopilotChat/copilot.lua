@@ -348,6 +348,11 @@ function Copilot:ask(prompt, opts)
   local on_progress = opts.on_progress
   local on_error = opts.on_error
 
+  log.debug('use_general_ai', opts.use_general_ai)
+  if opts.use_general_ai then
+    system_prompt = 'You are a general AI. Please assist me with your capacity.'
+  end
+
   -- log.debug('System prompt: ' .. system_prompt)
   -- log.debug('Prompt: ' .. prompt)
   -- log.debug('Embeddings: ' .. #embeddings)
@@ -534,12 +539,13 @@ function Copilot:embed(inputs, opts)
   local jobs = {}
   for _, chunk in ipairs(chunks) do
     local body = vim.json.encode(generate_embedding_request(chunk, model))
+    local file = temp_file(body)
 
     table.insert(jobs, function(resolve)
       local headers = generate_headers(self.token.token, self.sessionid, self.machineid)
       curl.post(url, {
         headers = headers,
-        body = temp_file(body),
+        body = file,
         proxy = self.proxy,
         insecure = self.allow_insecure,
         on_error = function(err)
