@@ -172,7 +172,8 @@ local function generate_ask_request(
   selection,
   system_prompt,
   model,
-  temperature
+  temperature,
+  use_selection
 )
   local messages = {}
 
@@ -194,7 +195,7 @@ local function generate_ask_request(
     })
   end
 
-  if selection ~= '' then
+  if selection ~= '' and use_selection then
     table.insert(messages, {
       content = selection,
       role = 'system',
@@ -393,7 +394,8 @@ function Copilot:ask(prompt, opts)
       selection_message,
       system_prompt,
       model,
-      temperature
+      temperature,
+      opts.use_selection
     )
   )
 

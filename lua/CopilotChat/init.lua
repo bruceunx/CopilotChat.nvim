@@ -333,6 +333,10 @@ function M.response()
   return state.response
 end
 
+function M.use_selection(use)
+  M.config.use_selection = use
+end
+
 function M.change_gpt(gpt_name)
   gpt_name = gpt_name or 'copilot'
   M.config.gpt_server = gpt_name
@@ -420,6 +424,7 @@ function M.ask(prompt, config, source)
         model = config.model,
         token_url = token_url,
         url = url,
+        use_selection = M.config.use_selection,
         gpt_server = M.config.gpt_server,
         temperature = config.temperature,
         on_error = on_error,
@@ -823,12 +828,12 @@ function M.setup(config)
     return options
   end
 
-  vim.api.nvim_create_user_command('CopilotChatSave', function(args)
-    M.save(args.args)
-  end, { nargs = '*', force = true, complete = complete_load })
-  vim.api.nvim_create_user_command('CopilotChatLoad', function(args)
-    M.load(args.args)
-  end, { nargs = '*', force = true, complete = complete_load })
+  -- vim.api.nvim_create_user_command('CopilotChatSave', function(args)
+  --   M.save(args.args)
+  -- end, { nargs = '*', force = true, complete = complete_load })
+  -- vim.api.nvim_create_user_command('CopilotChatLoad', function(args)
+  --   M.load(args.args)
+  -- end, { nargs = '*', force = true, complete = complete_load })
 end
 
 return M

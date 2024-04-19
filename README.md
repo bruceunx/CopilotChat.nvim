@@ -108,6 +108,25 @@ return {
     },
 ```
 
+### Add suppress selection when using Copilot Chat
+
+```lua
+    {
+        "<leader>as",
+        function()
+            local input = vim.fn.input("Use selection: 1 - use, 2 - no \n")
+            if input ~= "" then
+                if input == "1" then
+                    require("CopilotChat").use_selection(true)
+                else
+                    require("CopilotChat").use_selection(false)
+                end
+            end
+        end,
+        desc = "CopilotChat - Suppress selection",
+    },
+```
+
 ### Lazy.nvim
 
 ```lua
