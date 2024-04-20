@@ -383,12 +383,13 @@ function M.ask(prompt, config, source)
     '\n\n'
       .. M.config.answer_header
       .. M.config.separator
-      .. ' | '
+      .. '| '
       .. M.config.gpt_server
       .. ' | use_selection->'
       .. tostring(M.config.use_selection)
       .. ' | use_general_ai->'
       .. tostring(M.config.use_general_ai)
+      .. ' |'
       .. M.config.separator
       .. '\n\n'
   )
@@ -489,12 +490,13 @@ function M.reset(no_insert)
     append(
       M.config.question_header
         .. M.config.separator
-        .. ' | '
+        .. '| '
         .. M.config.gpt_server
         .. ' | use_selection->'
         .. tostring(M.config.use_selection)
         .. ' | use_general_ai->'
         .. tostring(M.config.use_general_ai)
+        .. ' |'
         .. M.config.separator
         .. '\n\n'
     )
@@ -806,12 +808,13 @@ function M.setup(config)
     append(
       M.config.question_header
         .. M.config.separator
-        .. ' | '
+        .. '| '
         .. M.config.gpt_server
         .. ' | use_selection->'
         .. tostring(M.config.use_selection)
         .. ' | use_general_ai->'
         .. tostring(M.config.use_general_ai)
+        .. ' |'
         .. M.config.separator
         .. '\n\n'
     )
