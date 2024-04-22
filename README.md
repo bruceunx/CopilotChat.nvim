@@ -51,38 +51,59 @@ return {
 		prompts = prompts,
 		auto_follow_cursor = false, -- Don't follow the cursor after getting response
 		show_help = true, -- Show help in virtual text, set to true if that's 1st time using Copilot Chat
-		gpt_server = "groq", -- copilot or gemini or groq
+		gpt_server = "groq", -- copilot or gemini or groq or openai
 		copilot_url = "https://api.githubcopilot.com/chat/completions",
-		gemini_url = "", -- custom url for gemini with the same api interface
-		groq_url = "", -- custom url for groq with the same api interface
+		groq = {
+			url = "",
+		},
+		copilot = {
+			url = "",
+		},
+		gemini = {
+			url = "",
+		},
+		openai = {
+			url = "",
+		},
 	},
 	config = function(_, opts)
 		local chat = require("CopilotChat")
 		chat.setup(opts)
     end,
+
+    keys = {
+		-- Change GPT server keybinding
+		{
+			"<leader>ac",
+			function()
+				local input = vim.fn.input(
+					"Change gpt_server: 1 - Copilot, 2 - Gemini, 3 - Groq, 4 - openai or just type name \n"
+				)
+				if input ~= "" then
+					if input == "1" then
+						require("CopilotChat").change_gpt("copilot")
+					elseif input == "2" then
+						require("CopilotChat").change_gpt("gemini")
+					elseif input == "3" then
+						require("CopilotChat").change_gpt("groq")
+					elseif input == "4" then
+						require("CopilotChat").change_gpt("openai")
+					else
+						require("CopilotChat").change_gpt(input)
+					end
+				end
+			end,
+			desc = "CopilotChat - change gpt server",
+		},
+    },
 }
 ```
 
-#### Add Change `gpt_server` key bindings
-
-> user can add in above config
+> if you want to add new llm server, just add llm_supplier_name and url for this server
 
 ```lua
-    {
-        "<leader>ac",
-        function()
-            local input = vim.fn.input("Change gpt_server: 1 - Copilot, 2 - Gemini, 3 - Groq \n")
-            if input ~= "" then
-                if input == "1" then
-                    require("CopilotChat").change_gpt("copilot")
-                elseif input == "2" then
-                    require("CopilotChat").change_gpt("gemini")
-                else
-                    require("CopilotChat").change_gpt("groq")
-                end
-            end
-        end,
-        desc = "CopilotChat - change gpt server",
+    llm_supplier_name = {
+        url = "",
     },
 ```
 

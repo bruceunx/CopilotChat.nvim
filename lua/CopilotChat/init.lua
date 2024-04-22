@@ -416,11 +416,8 @@ function M.ask(prompt, config, source)
   end
   local token_url = M.config.copilot_token_url
   local url = M.config.copilot_url
-  if M.config.gpt_server == 'gemini' then
-    url = M.config.gemini_url
-  elseif M.config.gpt_server == 'groq' then
-    url = M.config.groq_url
-  end
+
+  url = M.config[M.config.gpt_server].url
 
   context.find_for_query(state.copilot, {
     context = selected_context,
