@@ -447,12 +447,14 @@ function M.ask(prompt, config, source)
         gpt_server = M.config.gpt_server,
         temperature = config.temperature,
         on_error = on_error,
-        on_done = function(response, token_count)
+        on_done = function(response, token_count, token_count_in)
           vim.schedule(function()
             append('\n\n' .. M.config.question_header .. M.config.separator .. '\n\n')
             state.response = response
             if tiktoken.available() and token_count and token_count > 0 then
-              state.chat:finish(token_count .. ' tokens used')
+              state.chat:finish(
+                token_count .. ' tokens output used | ' .. token_count_in .. ' tokens input used'
+              )
             else
               state.chat:finish()
             end

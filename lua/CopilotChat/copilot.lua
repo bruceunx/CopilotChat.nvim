@@ -263,6 +263,7 @@ local Copilot = class(function(self, proxy, allow_insecure)
   self.github_token = get_cached_token()
   self.history = {}
   self.token = nil
+  self.token_count_in = 0
   self.token_count = 0
   self.sessionid = nil
   self.machineid = machine_id()
@@ -348,6 +349,7 @@ function Copilot:ask(prompt, opts)
   local on_progress = opts.on_progress
   local on_error = opts.on_error
 
+  self.token_count_in = self.token_count_in + self.token_count
   -- log.debug(
   --   'use_general_ai->',
   --   opts.use_general_ai,
@@ -379,11 +381,12 @@ function Copilot:ask(prompt, opts)
   local embeddings_message = generate_embeddings_message(embeddings)
 
   -- Count tokens
-  self.token_count = self.token_count + tiktoken.count(prompt)
+  -- self.token_count = self.token_count + tiktoken.count(prompt)
 
   local current_count = 0
   current_count = current_count + tiktoken.count(system_prompt)
   current_count = current_count + tiktoken.count(selection_message)
+  current_count = current_count + tiktoken.count(prompt)
 
   if #embeddings_message.files > 0 then
     local filtered_files = {}
@@ -473,7 +476,8 @@ function Copilot:ask(prompt, opts)
             self.token_count = self.token_count + tiktoken.count(full_response)
 
             if self.current_job and on_done then
-              on_done(full_response, self.token_count + current_count)
+              self.token_count_in = self.token_count_in + current_count
+              on_done(full_response, self.token_count, self.token_count_in)
             end
 
             table.insert(self.history, {
@@ -628,6 +632,7 @@ end
 function Copilot:reset()
   local stopped = self:stop()
   self.history = {}
+  self.token_count_in = 0
   self.token_count = 0
   return stopped
 end
