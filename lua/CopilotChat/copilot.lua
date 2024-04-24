@@ -349,7 +349,6 @@ function Copilot:ask(prompt, opts)
   local on_progress = opts.on_progress
   local on_error = opts.on_error
   local limit = opts.limit or 20
-  local max_tokens = opts.max_tokens or 7000
 
   self.token_count_in = self.token_count_in + self.token_count
   -- log.debug(
@@ -487,7 +486,9 @@ function Copilot:ask(prompt, opts)
               role = 'assistant',
             })
             if #self.history > limit then
+              self.token_count_in = self.token_count_in - tiktoken.count(self.history[1]['content'])
               table.remove(self.history, 1)
+              self.token_count_in = self.token_count_in - tiktoken.count(self.history[1]['content'])
               table.remove(self.history, 1)
             end
 
@@ -498,7 +499,9 @@ function Copilot:ask(prompt, opts)
             end
 
             if tmp_token > max_tokens then
+              self.token_count_in = self.token_count_in - tiktoken.count(self.history[1]['content'])
               table.remove(self.history, 1)
+              self.token_count_in = self.token_count_in - tiktoken.count(self.history[1]['content'])
               table.remove(self.history, 1)
             end
 
