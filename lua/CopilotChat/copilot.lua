@@ -348,6 +348,7 @@ function Copilot:ask(prompt, opts)
   local on_done = opts.on_done
   local on_progress = opts.on_progress
   local on_error = opts.on_error
+  local limit = opts.limit or 20
 
   self.token_count_in = self.token_count_in + self.token_count
   -- log.debug(
@@ -484,6 +485,10 @@ function Copilot:ask(prompt, opts)
               content = full_response,
               role = 'assistant',
             })
+            if #self.history > limit then
+              table.remove(self.history, 1)
+              table.remove(self.history, 1)
+            end
             return
           end
 
