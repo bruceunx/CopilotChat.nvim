@@ -443,6 +443,7 @@ function M.ask(prompt, config, source)
         use_general_ai = M.config.use_general_ai,
         gpt_server = M.config.gpt_server,
         temperature = config.temperature,
+        limit = M.config.limit or 20,
         on_error = on_error,
         on_done = function(response, token_count, token_count_in)
           vim.schedule(function()
