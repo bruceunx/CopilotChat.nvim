@@ -516,8 +516,10 @@ function Copilot:ask(prompt, opts)
           })
 
           if not ok then
-            err = 'Failed parse response: \n' .. line .. '\n' .. vim.inspect(content)
-            log.error(err)
+            if string.find(line, 'ping') == nil then
+              err = 'Failed parse response: \n' .. line .. '\n' .. vim.inspect(content)
+              log.error(err)
+            end
             return
           end
 
