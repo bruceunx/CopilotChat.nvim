@@ -189,7 +189,11 @@ local function get_selection()
     and vim.api.nvim_buf_is_valid(bufnr)
     and vim.api.nvim_win_is_valid(winnr)
   then
-    return state.config.selection(state.source) or {}
+    if state.source then
+      return state.config.selection(state.source)
+    else
+      return {}
+    end
   end
   return {}
 end
