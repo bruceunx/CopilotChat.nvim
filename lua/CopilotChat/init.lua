@@ -381,11 +381,15 @@ function M.ask(prompt, config, source)
     bufn_filename = vim.api.nvim_buf_get_name(state.source.bufnr)
   end
 
-  local filetype = selection.filetype or bufn_filetype
-  local filename = selection.filename or bufn_filename
+  local filetype = bufn_filetype
+  local filename = bufn_filename
 
-  if selection.prompt_extra then
-    updated_prompt = updated_prompt .. ' ' .. selection.prompt_extra
+  if selection ~= nil then
+    filetype = selection.filetype or bufn_filetype
+    filename = selection.filename or bufn_filename
+    if selection.prompt_extra then
+      updated_prompt = updated_prompt .. ' ' .. selection.prompt_extra
+    end
   end
 
   if state.copilot:stop() then
