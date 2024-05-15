@@ -383,10 +383,12 @@ function M.ask(prompt, config, source)
 
   local filetype = bufn_filetype
   local filename = bufn_filename
+  local lines = {}
 
   if selection ~= nil then
     filetype = selection.filetype or bufn_filetype
     filename = selection.filename or bufn_filename
+    lines = selection.lines
     if selection.prompt_extra then
       updated_prompt = updated_prompt .. ' ' .. selection.prompt_extra
     end
@@ -441,14 +443,14 @@ function M.ask(prompt, config, source)
   context.find_for_query(state.copilot, {
     context = selected_context,
     prompt = updated_prompt,
-    selection = selection.lines,
+    selection = lines,
     filename = filename,
     filetype = filetype,
     bufnr = state.source.bufnr,
     on_error = on_error,
     on_done = function(embeddings)
       state.copilot:ask(updated_prompt, {
-        selection = selection.lines,
+        selection = lines,
         embeddings = embeddings,
         filename = filename,
         filetype = filetype,
