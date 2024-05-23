@@ -384,10 +384,16 @@ function M.ask(prompt, config, source)
   local filetype = bufn_filetype
   local filename = bufn_filename
   local lines = {}
+  local start_row = 0
+  local end_row = 0
 
   if selection ~= nil then
     filetype = selection.filetype or bufn_filetype
     filename = selection.filename or bufn_filename
+
+    start_row = selection.start_row or 0
+    end_row = selection.end_row or 0
+
     lines = selection.lines
     if selection.prompt_extra then
       updated_prompt = updated_prompt .. ' ' .. selection.prompt_extra
@@ -454,8 +460,8 @@ function M.ask(prompt, config, source)
         embeddings = embeddings,
         filename = filename,
         filetype = filetype,
-        start_row = selection.start_row,
-        end_row = selection.end_row,
+        start_row = start_row,
+        end_row = end_row,
         system_prompt = system_prompt,
         model = config.model,
         token_url = token_url,
