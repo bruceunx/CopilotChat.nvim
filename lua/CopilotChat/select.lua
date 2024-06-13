@@ -15,8 +15,7 @@ local function get_selection_lines(bufnr, start_line, start_col, finish_line, fi
   end
 
   local finish_line_len = 0
-  local vision_lines =
-    vim.api.vim.api.nvim_buf_get_lines(bufnr, finish_line - 1, finish_line, false)
+  local vision_lines = vim.api.nvim_buf_get_lines(bufnr, finish_line - 1, finish_line, false)
   if vision_lines ~= nil then
     finish_line_len = #vim.api.nvim_buf_get_lines(bufnr, finish_line - 1, finish_line, false)[1]
     if finish_col > finish_line_len or full_line then
