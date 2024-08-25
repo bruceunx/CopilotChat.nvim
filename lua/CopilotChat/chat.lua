@@ -135,9 +135,9 @@ function Chat:open(config)
   elseif layout == 'vertical' then
     local orig = vim.api.nvim_get_current_win()
     local cmd = 'vsplit'
-    if width ~= 0 then
-      cmd = width .. cmd
-    end
+    -- if width ~= 0 then
+    --   cmd = width .. cmd
+    -- end
     vim.cmd(cmd)
     self.winnr = vim.api.nvim_get_current_win()
     vim.api.nvim_win_set_buf(self.winnr, self.bufnr)

@@ -908,5 +908,6 @@ function M.setup(config)
   --   M.load(args.args)
   -- end, { nargs = '*', force = true, complete = complete_load })
 end
+print('hello world')
 
 return M
