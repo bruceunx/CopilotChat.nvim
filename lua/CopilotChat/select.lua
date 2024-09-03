@@ -23,12 +23,35 @@ local function get_selection_lines(bufnr, start_line, start_col, finish_line, fi
     end
   end
 
-  local lines =
-    vim.api.nvim_buf_get_text(bufnr, start_line - 1, start_col - 1, finish_line - 1, finish_col, {})
+  local function safe_nvim_buf_get_text(buf, start_row, _start_col, end_row, end_col, opts)
+    local total_lines = vim.api.nvim_buf_line_count(buf)
 
-  local lines_content = table.concat(lines, '\n')
-  if vim.trim(lines_content) == '' then
-    return nil
+    if start_row < 0 or end_row >= total_lines then
+      return nil
+    end
+
+    local start_line_content = vim.api.nvim_buf_get_lines(buf, start_row, start_row + 1, false)
+    if _start_col < 0 or _start_col >= #start_line_content[1] then
+      return nil
+    end
+
+    local end_line_content = vim.api.nvim_buf_get_lines(buf, end_row, end_row + 1, false)
+    if end_col < 0 or end_col > #end_line_content[1] then -- end_col is allowed to equal length for slicing
+      return nil
+    end
+
+    return vim.api.nvim_buf_get_text(buf, start_row, _start_col, end_row, end_col, opts)
+  end
+
+  local lines =
+    safe_nvim_buf_get_text(bufnr, start_line - 1, start_col - 1, finish_line - 1, finish_col, {})
+
+  local lines_content
+  if lines ~= nil then
+    lines_content = table.concat(lines, '\n')
+    if vim.trim(lines_content) == '' then
+      return nil
+    end
   end
 
   return {
