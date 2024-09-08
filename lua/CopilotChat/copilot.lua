@@ -173,7 +173,7 @@ function Copilot:ask(prompt, opts)
   local function run_chat()
     local headers = {
       ['Content-Type'] = 'application/json',
-      ['Authorization'] = 'Bearer' .. token,
+      ['Authorization'] = 'Bearer ' .. token,
     }
     local file = temp_file(body)
     self.current_job = curl
