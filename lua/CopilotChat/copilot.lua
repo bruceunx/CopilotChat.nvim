@@ -10,10 +10,11 @@
 ---@field on_done nil|fun(response: string, token_count: number?, token_count_in:number?):nil
 ---@field on_progress nil|fun(response: string):nil
 ---@field on_error nil|fun(err: string):nil
----@field use_selection string?
+---@field use_selection boolean?
 ---@field limit number?
 ---@field use_general_ai boolean?
 ---@field url string|CopilotChat.config.prompt
+---@field token string?
 
 ---@class CopilotChat.Copilot
 ---@field ask fun(self: CopilotChat.Copilot, prompt: string, opts: CopilotChat.copilot.ask.opts):nil
@@ -113,20 +114,19 @@ end)
 ---@param opts CopilotChat.copilot.ask.opts: Options for the request
 function Copilot:ask(prompt, opts)
   opts = opts or {}
-  -- local embeddings = opts.embeddings or {}
   local filename = opts.filename or ''
   local filetype = opts.filetype or ''
   local selection = opts.selection or ''
   local start_row = opts.start_row or 0
   local end_row = opts.end_row or 0
   local system_prompt = opts.system_prompt or prompts.COPILOT_INSTRUCTIONS
-  local model = opts.model or ''
   local temperature = opts.temperature or 0.1
   local on_done = opts.on_done
   local on_progress = opts.on_progress
   local on_error = opts.on_error
-  local token = ''
-  local limit = opts.limit or 20
+  local token = opts.token
+  local model = opts.model
+  local limit = opts.limit
 
   self.token_count_in = self.token_count_in + self.token_count
 
@@ -143,7 +143,6 @@ function Copilot:ask(prompt, opts)
     generate_selection_message(filename, filetype, start_row, end_row, selection)
 
   -- Count tokens
-  -- self.token_count = self.token_count + tiktoken.count(prompt)
 
   local current_count = 0
   current_count = current_count + tiktoken.count(system_prompt)
@@ -173,8 +172,8 @@ function Copilot:ask(prompt, opts)
 
   local function run_chat()
     local headers = {
-      ['content-type'] = 'application/json',
-      ['authorization'] = 'Bearer' .. token,
+      ['Content-Type'] = 'application/json',
+      ['Authorization'] = 'Bearer' .. token,
     }
     local file = temp_file(body)
     self.current_job = curl

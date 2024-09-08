@@ -346,7 +346,7 @@ function M.use_selection(use)
 end
 
 function M.change_gpt(gpt_name)
-  gpt_name = gpt_name or 'copilot'
+  gpt_name = gpt_name or 'groq'
   M.config.gpt_server = gpt_name
 end
 --- Ask a question to the Copilot model.
@@ -442,6 +442,8 @@ function M.ask(prompt, config, source)
     end)
   end
   local url = M.config[M.config.gpt_server].url
+  local token = M.config[M.config.gpt_server].token or ''
+  local model = M.config[M.config.gpt_server].model or ''
 
   context.find_for_query({
     context = selected_context,
@@ -455,8 +457,9 @@ function M.ask(prompt, config, source)
         start_row = start_row,
         end_row = end_row,
         system_prompt = system_prompt,
-        model = config.model,
+        model = model,
         url = url,
+        token = token,
         use_selection = M.config.use_selection,
         use_general_ai = M.config.use_general_ai,
         gpt_server = M.config.gpt_server,

@@ -76,6 +76,10 @@ local select = require('CopilotChat.select')
 ---@field prompts table<string, CopilotChat.config.prompt|string>?
 ---@field window CopilotChat.config.window?
 ---@field mappings CopilotChat.config.mappings?
+---@field gpt_server string?
+---@field use_general_ai boolean?
+---@field use_selection boolean?
+---
 return {
   debug = false, -- Enable debug logging
   proxy = nil, -- [protocol://]host[:port] Use this proxy
