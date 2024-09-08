@@ -383,7 +383,7 @@ function M.ask(prompt, config, source)
 
   local filetype = bufn_filetype
   local filename = bufn_filename
-  local lines = {}
+  local lines = ''
   local start_row = 0
   local end_row = 0
 
@@ -441,19 +441,11 @@ function M.ask(prompt, config, source)
       end
     end)
   end
-  local token_url = M.config.copilot_token_url
-  local url = M.config.copilot_url
+  local url = M.config[M.config.gpt_server].url
 
-  url = M.config[M.config.gpt_server].url
-
-  context.find_for_query(state.copilot, {
+  context.find_for_query({
     context = selected_context,
-    prompt = updated_prompt,
-    selection = lines,
-    filename = filename,
-    filetype = filetype,
     bufnr = state.source.bufnr,
-    on_error = on_error,
     on_done = function(embeddings)
       state.copilot:ask(updated_prompt, {
         selection = lines,
@@ -464,13 +456,12 @@ function M.ask(prompt, config, source)
         end_row = end_row,
         system_prompt = system_prompt,
         model = config.model,
-        token_url = token_url,
         url = url,
         use_selection = M.config.use_selection,
         use_general_ai = M.config.use_general_ai,
         gpt_server = M.config.gpt_server,
         temperature = config.temperature,
-        limit = M.config.limit or 20,
+        limit = 20,
         on_error = on_error,
         on_done = function(response, token_count, token_count_in)
           vim.schedule(function()
@@ -908,6 +899,4 @@ function M.setup(config)
   --   M.load(args.args)
   -- end, { nargs = '*', force = true, complete = complete_load })
 end
-print('hello world')
-
 return M
